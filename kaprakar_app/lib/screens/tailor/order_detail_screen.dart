@@ -189,17 +189,11 @@ class OrderDetailScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          order['_id'] != null
-              ? "Order #${order['orderNumber'] ?? order['_id'].substring(order['_id'].length > 6 ? order['_id'].length - 6 : 0).toUpperCase()}"
-              : "Order Details",
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
+      body: Column(
+        children: [
+          _buildHeader(context, order),
+          Expanded(
+            child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -647,6 +641,54 @@ class OrderDetailScreen extends StatelessWidget {
             const SizedBox(height: 40),
           ],
         ),
+      ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, Map<String, dynamic> order) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(
+        left: AppSpacing.sm, 
+        right: AppSpacing.lg, 
+        top: MediaQuery.of(context).padding.top + AppSpacing.sm, 
+        bottom: AppSpacing.xl
+      ),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, Color(0xFF004D54)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            order['_id'] != null
+                ? "Order #${order['orderNumber'] ?? order['_id'].substring(order['_id'].length > 6 ? order['_id'].length - 6 : 0).toUpperCase()}"
+                : "Order Details",
+            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }

@@ -111,97 +111,146 @@ class _OrderStatusUpdaterScreenState extends State<OrderStatusUpdaterScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.updateStatus)),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              itemCount: _steps.length,
-              itemBuilder: (context, index) {
-                final step = _steps[index];
+      body: Column(
+        children: [
+          _buildHeader(context),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    itemCount: _steps.length,
+                    itemBuilder: (context, index) {
+                      final step = _steps[index];
 
-                bool isCompleted = false;
-                bool isNextAvailable = false;
-                String customActionText = 'Update';
-                VoidCallback? onAction = () => _updateStatus(step['status'], index);
+                      bool isCompleted = false;
+                      bool isNextAvailable = false;
+                      String customActionText = 'Update';
+                      VoidCallback? onAction = () => _updateStatus(step['status'], index);
 
-                if (index == 0) {
-                  isCompleted = currentStatus != 'pending';
-                  isNextAvailable = currentStatus == 'pending';
-                } else if (index == 1) {
-                  isCompleted = ['fabric-received', 'in-progress', 'pending_customer_review', 'ready', 'completed', 'revision-requested', 'revision-in-progress'].contains(currentStatus);
-                  isNextAvailable = currentStatus == 'accepted';
-                } else if (index == 2) {
-                  isCompleted = ['in-progress', 'pending_customer_review', 'ready', 'completed', 'revision-requested', 'revision-in-progress'].contains(currentStatus);
-                  isNextAvailable = currentStatus == 'fabric-received';
-                } else if (index == 3) {
-                  isCompleted = ['pending_customer_review', 'ready', 'completed', 'revision-requested', 'revision-in-progress'].contains(currentStatus);
-                  isNextAvailable = ['in-progress', 'revision-in-progress', 'revision-requested', 'pending_customer_review'].contains(currentStatus);
-                  
-                  if (currentStatus == 'revision-requested') {
-                     customActionText = 'Start Revision';
-                     onAction = () => _updateStatus('revision-in-progress', index);
-                  } else if (currentStatus == 'revision-in-progress') {
-                     customActionText = 'Upload Revision Photo';
-                     onAction = () => Navigator.pushNamed(context, AppRoutes.finalPhotoUpload, arguments: {'orderId': _order!['_id']});
-                  } else if (currentStatus == 'pending_customer_review') {
-                     customActionText = 'Waiting for Customer...';
-                     onAction = null; 
-                  }
-                } else if (index == 4) {
-                  isCompleted = currentStatus == 'completed';
-                  isNextAvailable = currentStatus == 'ready';
-                }
+                      if (index == 0) {
+                        isCompleted = currentStatus != 'pending';
+                        isNextAvailable = currentStatus == 'pending';
+                      } else if (index == 1) {
+                        isCompleted = ['fabric-received', 'in-progress', 'pending_customer_review', 'ready', 'completed', 'revision-requested', 'revision-in-progress'].contains(currentStatus);
+                        isNextAvailable = currentStatus == 'accepted';
+                      } else if (index == 2) {
+                        isCompleted = ['in-progress', 'pending_customer_review', 'ready', 'completed', 'revision-requested', 'revision-in-progress'].contains(currentStatus);
+                        isNextAvailable = currentStatus == 'fabric-received';
+                      } else if (index == 3) {
+                        isCompleted = ['pending_customer_review', 'ready', 'completed', 'revision-requested', 'revision-in-progress'].contains(currentStatus);
+                        isNextAvailable = ['in-progress', 'revision-in-progress', 'revision-requested', 'pending_customer_review'].contains(currentStatus);
+                        
+                        if (currentStatus == 'revision-requested') {
+                           customActionText = 'Start Revision';
+                           onAction = () => _updateStatus('revision-in-progress', index);
+                        } else if (currentStatus == 'revision-in-progress') {
+                           customActionText = 'Upload Revision Photo';
+                           onAction = () => Navigator.pushNamed(context, AppRoutes.finalPhotoUpload, arguments: {'orderId': _order!['_id']});
+                        } else if (currentStatus == 'pending_customer_review') {
+                           customActionText = 'Waiting for Customer...';
+                           onAction = null; 
+                        }
+                      } else if (index == 4) {
+                        isCompleted = currentStatus == 'completed';
+                        isNextAvailable = currentStatus == 'ready';
+                      }
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: AppSpacing.md),
-                  elevation: isNextAvailable && onAction != null ? 4 : 0,
-                  shadowColor: AppColors.primary.withOpacity(0.2),
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: isCompleted ? AppColors.primary : (isNextAvailable && onAction != null ? AppColors.primary : AppColors.border),
-                      width: isCompleted || (isNextAvailable && onAction != null) ? 2 : 1,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(AppSpacing.md),
-                    leading: CircleAvatar(
-                      backgroundColor: isCompleted ? AppColors.primary : (isNextAvailable && onAction != null ? AppColors.primary.withOpacity(0.1) : Colors.grey.withOpacity(0.1)),
-                      child: Icon(
-                        isCompleted && index != 3 ? Icons.check : step['icon'],
-                        color: isCompleted ? Colors.white : (isNextAvailable && onAction != null ? AppColors.primary : Colors.grey),
-                      ),
-                    ),
-                    title: Text(
-                      step['title'],
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isCompleted || (isNextAvailable && onAction != null) ? AppColors.textPrimary : Colors.grey,
-                      ),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        index == 3 && currentStatus == 'revision-requested' ? 'Customer requested a revision!' : step['desc'],
-                        style: TextStyle(color: isCompleted || (isNextAvailable && onAction != null) ? AppColors.textSecondary : Colors.grey),
-                      ),
-                    ),
-                    trailing: isNextAvailable
-                        ? ElevatedButton(
-                            onPressed: onAction,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: onAction == null ? Colors.grey : AppColors.primary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                        elevation: isNextAvailable && onAction != null ? 4 : 0,
+                        shadowColor: AppColors.primary.withOpacity(0.2),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: isCompleted ? AppColors.primary : (isNextAvailable && onAction != null ? AppColors.primary : AppColors.border),
+                            width: isCompleted || (isNextAvailable && onAction != null) ? 2 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(AppSpacing.md),
+                          leading: CircleAvatar(
+                            backgroundColor: isCompleted ? AppColors.primary : (isNextAvailable && onAction != null ? AppColors.primary.withOpacity(0.1) : Colors.grey.withOpacity(0.1)),
+                            child: Icon(
+                              isCompleted && index != 3 ? Icons.check : step['icon'],
+                              color: isCompleted ? Colors.white : (isNextAvailable && onAction != null ? AppColors.primary : Colors.grey),
                             ),
-                            child: Text(customActionText),
-                          )
-                        : null,
+                          ),
+                          title: Text(
+                            step['title'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: isCompleted || (isNextAvailable && onAction != null) ? AppColors.textPrimary : Colors.grey,
+                            ),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              index == 3 && currentStatus == 'revision-requested' ? 'Customer requested a revision!' : step['desc'],
+                              style: TextStyle(color: isCompleted || (isNextAvailable && onAction != null) ? AppColors.textSecondary : Colors.grey),
+                            ),
+                          ),
+                          trailing: isNextAvailable
+                              ? ElevatedButton(
+                                  onPressed: onAction,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: onAction == null ? Colors.grey : AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                  child: Text(customActionText),
+                                )
+                              : null,
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(
+        left: AppSpacing.sm, 
+        right: AppSpacing.lg, 
+        top: MediaQuery.of(context).padding.top + AppSpacing.sm, 
+        bottom: AppSpacing.xl
+      ),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, Color(0xFF004D54)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            AppLocalizations.of(context)!.updateStatus,
+            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 }

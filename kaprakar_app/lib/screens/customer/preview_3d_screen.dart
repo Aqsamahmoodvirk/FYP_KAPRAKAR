@@ -150,26 +150,67 @@ class _Preview3DScreenState extends State<Preview3DScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('3D Preview'),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
       backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: Builder(
-          builder: (context) {
-            if (_status == 'success' && _modelUrl != null) {
-              return _buildSuccessState();
-            } else if (_status == 'failed' || _status == 'error') {
-              return _buildErrorState();
-            } else {
-              return _buildLoadingState();
-            }
-          },
+      body: Column(
+        children: [
+          _buildHeader(context),
+          Expanded(
+            child: Builder(
+              builder: (context) {
+                if (_status == 'success' && _modelUrl != null) {
+                  return _buildSuccessState();
+                } else if (_status == 'failed' || _status == 'error') {
+                  return _buildErrorState();
+                } else {
+                  return _buildLoadingState();
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(
+        left: 8.0, 
+        right: 24.0, 
+        top: MediaQuery.of(context).padding.top + 8.0, 
+        bottom: 32.0
+      ),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF006D77), Color(0xFF004D54)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF006D77).withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            '3D Preview',
+            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }
