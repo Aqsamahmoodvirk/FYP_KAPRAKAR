@@ -1,0 +1,382 @@
+[
+  {
+    "occasion": "eid",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "straight shirt",
+    "fabric": "lawn",
+    "trend": "minimal embroidery",
+    "sleeves": "bell sleeves",
+    "neckStyle": "round neck",
+    "embroideryType": "thread embroidery",
+    "colors": [
+      "pink",
+      "blue"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20eid%20lawn%20dress"
+  },
+  {
+    "occasion": "wedding",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "long frock",
+    "fabric": "chiffon",
+    "trend": "heavy embroidery",
+    "sleeves": "full sleeves",
+    "neckStyle": "illusion neck",
+    "embroideryType": "zari work",
+    "colors": [
+      "maroon",
+      "black"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20bridal%20frock"
+  },
+  {
+    "occasion": "casual",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "kurti with trousers",
+    "fabric": "cotton",
+    "trend": "printed floral",
+    "sleeves": "half sleeves",
+    "neckStyle": "ban collar",
+    "embroideryType": "minimal lace work",
+    "colors": [
+      "white",
+      "yellow"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20casual%20kurti"
+  },
+  {
+    "occasion": "party",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "peplum shirt",
+    "fabric": "velvet",
+    "trend": "modern cut",
+    "sleeves": "puff sleeves",
+    "neckStyle": "boat neck",
+    "embroideryType": "stone work",
+    "colors": [
+      "emerald green",
+      "black"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20party%20wear"
+  },
+  {
+    "occasion": "formal",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "angrakha",
+    "fabric": "organza",
+    "trend": "thread embroidery",
+    "sleeves": "full sleeves",
+    "neckStyle": "v neck",
+    "embroideryType": "resham embroidery",
+    "colors": [
+      "beige",
+      "gold"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20formal%20dress"
+  },
+  {
+    "occasion": "eid",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "straight shirt",
+    "fabric": "lawn",
+    "trend": "minimal embroidery",
+    "sleeves": "bell sleeves",
+    "neckStyle": "round neck",
+    "colors": [
+      "pastel pink",
+      "sky blue"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20eid%20lawn%20dress"
+  },
+  {
+    "occasion": "eid",
+    "season": "summer",
+    "bodyType": "curvy",
+    "style": "angrakha frock",
+    "fabric": "cotton net",
+    "trend": "lace detailing",
+    "sleeves": "full sleeves",
+    "neckStyle": "v neck",
+    "colors": [
+      "lavender",
+      "mint green"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=angrakha%20eid%20dress"
+  },
+  {
+    "occasion": "mehndi",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "gharara",
+    "fabric": "chiffon",
+    "trend": "mirror work embroidery",
+    "sleeves": "short sleeves",
+    "neckStyle": "boat neck",
+    "colors": [
+      "mustard",
+      "orange"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=mehndi%20gharara"
+  },
+  {
+    "occasion": "mehndi",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "sharara",
+    "fabric": "velvet",
+    "trend": "heavy gota work",
+    "sleeves": "full sleeves",
+    "neckStyle": "square neck",
+    "colors": [
+      "dark green",
+      "gold"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=velvet%20mehndi%20sharara"
+  },
+  {
+    "occasion": "walima",
+    "season": "winter",
+    "bodyType": "slim",
+    "style": "long frock",
+    "fabric": "organza",
+    "trend": "pearl embroidery",
+    "sleeves": "net sleeves",
+    "neckStyle": "illusion neck",
+    "colors": [
+      "silver",
+      "ice blue"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=walima%20organza%20dress"
+  },
+  {
+    "occasion": "walima",
+    "season": "summer",
+    "bodyType": "curvy",
+    "style": "maxi",
+    "fabric": "net",
+    "trend": "sequins work",
+    "sleeves": "cape sleeves",
+    "neckStyle": "sweetheart neck",
+    "colors": [
+      "champagne",
+      "beige"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20walima%20maxi"
+  },
+  {
+    "occasion": "casual",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "kurti",
+    "fabric": "lawn",
+    "trend": "printed floral patterns",
+    "sleeves": "half sleeves",
+    "neckStyle": "ban collar",
+    "colors": [
+      "white",
+      "peach"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=casual%20pakistani%20kurti"
+  },
+  {
+    "occasion": "casual",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "straight shirt",
+    "fabric": "khaddar",
+    "trend": "minimal prints",
+    "sleeves": "full sleeves",
+    "neckStyle": "round neck",
+    "colors": [
+      "maroon",
+      "brown"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=khaddar%20dress"
+  },
+  {
+    "occasion": "office",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "straight pants suit",
+    "fabric": "cotton",
+    "trend": "minimalist cuts",
+    "sleeves": "full sleeves",
+    "neckStyle": "collar neck",
+    "colors": [
+      "navy blue",
+      "white"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=office%20wear%20pakistani"
+  },
+  {
+    "occasion": "office",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "long shirt",
+    "fabric": "linen",
+    "trend": "solid tones",
+    "sleeves": "cuff sleeves",
+    "neckStyle": "v neck",
+    "colors": [
+      "olive",
+      "black"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20office%20wear"
+  },
+  {
+    "occasion": "university",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "kurta with jeans",
+    "fabric": "cambric",
+    "trend": "digital prints",
+    "sleeves": "rolled sleeves",
+    "neckStyle": "round neck",
+    "colors": [
+      "light blue",
+      "white"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=university%20pakistani%20fashion"
+  },
+  {
+    "occasion": "university",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "hooded kurti",
+    "fabric": "fleece",
+    "trend": "streetwear fusion",
+    "sleeves": "full sleeves",
+    "neckStyle": "hood neck",
+    "colors": [
+      "grey",
+      "black"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20winter%20university%20wear"
+  },
+  {
+    "occasion": "formal",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "peplum",
+    "fabric": "organza",
+    "trend": "thread embroidery",
+    "sleeves": "puff sleeves",
+    "neckStyle": "boat neck",
+    "colors": [
+      "ivory",
+      "gold"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20peplum"
+  },
+  {
+    "occasion": "formal",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "long gown",
+    "fabric": "velvet",
+    "trend": "zari embroidery",
+    "sleeves": "full sleeves",
+    "neckStyle": "high neck",
+    "colors": [
+      "emerald green",
+      "gold"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=velvet%20pakistani%20formal"
+  },
+  {
+    "occasion": "dawat",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "frock",
+    "fabric": "chiffon",
+    "trend": "ombre shades",
+    "sleeves": "flutter sleeves",
+    "neckStyle": "sweetheart neck",
+    "colors": [
+      "pink",
+      "white"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20dawat%20dress"
+  },
+  {
+    "occasion": "dawat",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "anarkali",
+    "fabric": "velvet",
+    "trend": "antique dabka work",
+    "sleeves": "full sleeves",
+    "neckStyle": "illusion neck",
+    "colors": [
+      "burgundy",
+      "gold"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=velvet%20anarkali"
+  },
+  {
+    "occasion": "bridal",
+    "season": "winter",
+    "bodyType": "slim",
+    "style": "lehenga",
+    "fabric": "raw silk",
+    "trend": "hand embroidery",
+    "sleeves": "full sleeves",
+    "neckStyle": "deep v neck",
+    "colors": [
+      "red",
+      "maroon"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20bridal%20lehenga"
+  },
+  {
+    "occasion": "bridal",
+    "season": "summer",
+    "bodyType": "curvy",
+    "style": "maxi",
+    "fabric": "organza",
+    "trend": "3d floral embroidery",
+    "sleeves": "net sleeves",
+    "neckStyle": "boat neck",
+    "colors": [
+      "rose gold",
+      "peach"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=pakistani%20bridal%20maxi"
+  },
+  {
+    "occasion": "party",
+    "season": "summer",
+    "bodyType": "slim",
+    "style": "short shirt gharara",
+    "fabric": "net",
+    "trend": "mirror embellishments",
+    "sleeves": "short sleeves",
+    "neckStyle": "square neck",
+    "colors": [
+      "yellow",
+      "pink"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=party%20gharara"
+  },
+  {
+    "occasion": "party",
+    "season": "winter",
+    "bodyType": "curvy",
+    "style": "kaftan",
+    "fabric": "velvet",
+    "trend": "stone work",
+    "sleeves": "loose sleeves",
+    "neckStyle": "v neck",
+    "colors": [
+      "navy",
+      "silver"
+    ],
+    "inspoLink": "https://www.pinterest.com/search/pins/?q=velvet%20kaftan"
+  }
+]
