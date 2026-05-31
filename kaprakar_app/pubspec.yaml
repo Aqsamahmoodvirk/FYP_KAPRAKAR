@@ -1,0 +1,66 @@
+name: kaprakar_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  firebase_core: ^4.9.0
+  firebase_auth: ^6.5.1
+  http: ^1.2.1
+  model_viewer_plus: ^1.7.0
+  url_launcher: ^6.3.0
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  intl: ^0.20.2
+  image_picker: ^1.1.2
+  path_provider: ^2.1.2
+  shared_preferences: ^2.5.5
+  provider: ^6.1.2
+  socket_io_client: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/models/
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_icon.PNG"
+  image_path: "assets/images/app_icon.PNG"
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#FFFFFF"
+  image: "assets/images/transparent.png"
+  image_dark: "assets/images/transparent.png"
+  android: true
+  ios: true
+  web: true
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#FFFFFF"
+    image: "assets/images/transparent.png"
+    image_dark: "assets/images/transparent.png"

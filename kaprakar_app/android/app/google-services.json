@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "867957249861",
+    "project_id": "kaprakar-65438",
+    "storage_bucket": "kaprakar-65438.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867957249861:android:23ac75256b21ac43c5502c",
+        "android_client_info": {
+          "package_name": "com.example.kaprakar_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZMfueHDVAqMPsEQm6-r3dc8Wf1DNRiwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
