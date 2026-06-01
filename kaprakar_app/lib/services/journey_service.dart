@@ -73,7 +73,7 @@ class JourneyService extends ChangeNotifier {
     notifyListeners();
     try {
       final response = await http.get(
-        Uri.parse('http://172.23.181.1:5000/api/auth/user/$userId'),
+        Uri.parse('https://fypkaprakar-production-4896.up.railway.app/api/auth/user/$userId'),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -107,7 +107,7 @@ class JourneyService extends ChangeNotifier {
       if (user != null) {
         final token = await user.getIdToken();
         final response = await http.get(
-          Uri.parse('http://172.23.181.1:5000/api/measurements/me'),
+          Uri.parse('https://fypkaprakar-production-4896.up.railway.app/api/measurements/me'),
           headers: {'Authorization': 'Bearer $token'},
         );
         if (response.statusCode == 200) {
@@ -185,7 +185,7 @@ class JourneyService extends ChangeNotifier {
   Future<String?> generateCheckout(String orderId, double amount, String userId) async {
     try {
       final response = await http.post(
-        Uri.parse('http://172.23.181.1:5000/api/payments/safepay/generate-checkout'),
+        Uri.parse('https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/generate-checkout'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'orderId': orderId, 'amount': amount, 'userId': userId}),
       );
@@ -203,7 +203,7 @@ class JourneyService extends ChangeNotifier {
   Future<String?> getPaymentStatus(String orderId) async {
     try {
       final response = await http.get(
-        Uri.parse('http://172.23.181.1:5000/api/payments/$orderId/status'),
+        Uri.parse('https://fypkaprakar-production-4896.up.railway.app/api/payments/$orderId/status'),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -215,6 +215,33 @@ class JourneyService extends ChangeNotifier {
       return null;
     }
   }
+
+  // Directly confirms payment on the backend (used by in-app payment screen)
+  Future<void> confirmPaymentDirectly(String orderId, String userId, double amount) async {
+    try {
+      // First init payment to create the payment record
+      final initResponse = await http.post(
+        Uri.parse('https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/generate-checkout'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'orderId': orderId, 'amount': amount, 'userId': userId}),
+      );
+      if (kDebugMode) print("Init response: ${initResponse.body}");
+
+      // Then mark payment as paid and order as ready via the success endpoint
+      final successResponse = await http.get(
+        Uri.parse('https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/success?orderId=$orderId'),
+      );
+      if (kDebugMode) print("Success response: ${successResponse.statusCode}");
+
+      if (successResponse.statusCode != 200) {
+        throw Exception('Failed to confirm payment on server');
+      }
+    } catch (e) {
+      if (kDebugMode) print("Error confirming payment: $e");
+      rethrow;
+    }
+  }
+
 
   Future<void> submitFeedback(
     String orderId,
@@ -255,7 +282,7 @@ class JourneyService extends ChangeNotifier {
         };
 
         final response = await http.post(
-          Uri.parse('http://172.23.181.1:5000/api/measurements'),
+          Uri.parse('https://fypkaprakar-production-4896.up.railway.app/api/measurements'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token',
@@ -302,7 +329,7 @@ class JourneyService extends ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('http://172.23.181.1:8000/style-note'),
+        Uri.parse('https://fypkaprakar-production.up.railway.app/style-note'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'occasion': occasion,
