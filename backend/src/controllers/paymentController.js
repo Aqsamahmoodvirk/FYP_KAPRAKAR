@@ -133,8 +133,8 @@ exports.initSafepay = async (req, res) => {
       const tracker = data.data.token;
       
       // Use the Node.js backend to serve a friendly HTML page when Safepay redirects
-      const redirectUrl = encodeURIComponent(`http://172.23.181.1:5000/api/payments/safepay/success?orderId=${orderId}`);
-      const cancelUrl = encodeURIComponent(`http://172.23.181.1:5000/api/payments/safepay/cancel?orderId=${orderId}`);
+      const redirectUrl = encodeURIComponent(`https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/success?orderId=${orderId}`);
+      const cancelUrl = encodeURIComponent(`https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/cancel?orderId=${orderId}`);
       
       // Safepay Official format: /checkout/pay
       const checkoutUrl = `https://sandbox.api.getsafepay.com/checkout/pay?env=sandbox&tracker=${tracker}&client=${safepayClient}&source=custom&order_id=${orderId}&redirect_url=${redirectUrl}&cancel_url=${cancelUrl}`;
