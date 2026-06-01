@@ -136,7 +136,8 @@ exports.initSafepay = async (req, res) => {
       const cancelUrl = encodeURIComponent(`https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/cancel?orderId=${orderId}`);
       
       // Safepay Official format: /checkout/pay uses t1 for success redirect and t2 for cancel redirect
-      const checkoutUrl = `https://sandbox.api.getsafepay.com/checkout/pay?env=sandbox&tracker=${tracker}&source=custom&t1=${redirectUrl}&t2=${cancelUrl}`;
+      // IMPORTANT: Safepay MUST have the client parameter in the URL or it fails validation.
+      const checkoutUrl = `https://sandbox.api.getsafepay.com/checkout/pay?env=sandbox&tracker=${tracker}&client=${safepayClient}&source=custom&t1=${redirectUrl}&t2=${cancelUrl}`;
 
       // Find or create Payment document
       let payment = await Payment.findOne({ orderId });
