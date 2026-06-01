@@ -84,84 +84,78 @@ exports.getTailorWallet = async (req, res) => {
 exports.initSafepay = async (req, res) => {
   try {
     const { orderId, amount, userId } = req.body;
-    
-    // 1. Strict Validation
+
+    // Validate inputs
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      console.error("[SAFEPAY INIT] Validation Error: Invalid amount:", amount);
       return res.status(400).json({ message: "Invalid amount. Must be a number greater than 0." });
     }
-
     if (!orderId) {
-      console.error("[SAFEPAY INIT] Validation Error: Missing orderId");
       return res.status(400).json({ message: "Missing required field: orderId." });
     }
-    
-    const safepayClient = process.env.SAFEPAY_PUBLIC_KEY || "sec_97992e36-93e4-43c3-adc6-884c1c292663";
-    
-    // Safepay requires amounts in the lowest denomination (Paisas).
-    // So 1500 PKR must be sent as 150000.
-    const amountForSafepay = Math.round(parsedAmount * 100);
 
+    const safepayPublicKey = process.env.SAFEPAY_PUBLIC_KEY || "sec_97992e36-93e4-43c3-adc6-884c1c292663";
+    const safepaySecretKey = process.env.SAFEPAY_SECRET_KEY || "sk_test_your_secret_key";
+    const backendUrl = process.env.BACKEND_URL || "https://fypkaprakar-production-4896.up.railway.app";
+
+    console.log(`[SAFEPAY] Initiating checkout for orderId=${orderId}, amount=${parsedAmount} PKR`);
+
+    // Safepay /order/v1/init expects amount in WHOLE PKR (not paisas)
     const payload = {
-      client: safepayClient,
-      amount: amountForSafepay, 
+      client: safepayPublicKey,
+      amount: parsedAmount,
       currency: "PKR",
       environment: "sandbox"
     };
 
-    // 3. Robust Logging
-    console.log("-----------------------------------------");
-    console.log("[SAFEPAY INIT] Generating new checkout...");
-    console.log("[SAFEPAY INIT] Order ID:", orderId);
-    console.log("[SAFEPAY INIT] Payload being sent to Safepay:");
-    console.log(JSON.stringify(payload, null, 2));
-    console.log("-----------------------------------------");
-    
     const response = await fetch("https://sandbox.api.getsafepay.com/order/v1/init", {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
 
     const data = await response.json();
-    
-    if (data && data.data && data.data.token) {
-      const tracker = data.data.token;
-      
-      // Use the Node.js backend to serve a friendly HTML page when Safepay redirects
-      const redirectUrl = encodeURIComponent(`https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/success?orderId=${orderId}`);
-      const cancelUrl = encodeURIComponent(`https://fypkaprakar-production-4896.up.railway.app/api/payments/safepay/cancel?orderId=${orderId}`);
-      
-      // Safepay Official format: /checkout/pay uses t1 for success redirect and t2 for cancel redirect
-      // IMPORTANT: Safepay MUST have the client parameter in the URL or it fails validation.
-      const checkoutUrl = `https://sandbox.api.getsafepay.com/checkout/pay?env=sandbox&tracker=${tracker}&client=${safepayClient}&source=custom&t1=${redirectUrl}&t2=${cancelUrl}`;
+    console.log("[SAFEPAY] Init response:", JSON.stringify(data));
 
-      // Find or create Payment document
-      let payment = await Payment.findOne({ orderId });
-      if (!payment) {
-        payment = await Payment.create({
-          orderId,
-          userId: userId || req.user?.id || '000000000000000000000000', // fallback if userId not provided
-          amount,
-          method: 'online',
-          status: 'pending',
-          transactionId: tracker
-        });
-      } else {
-        payment.transactionId = tracker;
-        payment.status = 'pending';
-        await payment.save();
-      }
-
-      res.status(200).json({ tracker, checkoutUrl, publicKey: safepayClient });
-    } else {
-      res.status(400).json({ message: "Failed to create Safepay tracker", details: data });
+    if (!data || !data.data || !data.data.token) {
+      console.error("[SAFEPAY] Failed to get tracker:", JSON.stringify(data));
+      return res.status(400).json({ message: "Failed to create Safepay tracker", details: data });
     }
+
+    const tracker = data.data.token;
+
+    // Build the success/cancel redirect URLs
+    const successUrl = encodeURIComponent(`${backendUrl}/api/payments/safepay/success?orderId=${orderId}`);
+    const cancelUrl = encodeURIComponent(`${backendUrl}/api/payments/safepay/cancel?orderId=${orderId}`);
+
+    // Correct Safepay checkout URL format
+    const checkoutUrl = `https://sandbox.api.getsafepay.com/checkout/pay?env=sandbox&tracker=${tracker}&client=${safepayPublicKey}&source=checkout&redirect_url=${successUrl}&cancel_url=${cancelUrl}`;
+
+    console.log(`[SAFEPAY] Checkout URL: ${checkoutUrl}`);
+
+    // Save or update payment record in DB
+    let payment = await Payment.findOne({ orderId });
+    if (!payment) {
+      payment = await Payment.create({
+        orderId,
+        userId: userId || '000000000000000000000000',
+        amount: parsedAmount,
+        method: 'online',
+        status: 'pending',
+        transactionId: tracker
+      });
+    } else {
+      payment.transactionId = tracker;
+      payment.status = 'pending';
+      payment.amount = parsedAmount;
+      await payment.save();
+    }
+
+    return res.status(200).json({ tracker, checkoutUrl, publicKey: safepayPublicKey });
+
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("[SAFEPAY] Error:", err.message);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -179,21 +173,11 @@ exports.getPaymentStatus = async (req, res) => {
   }
 };
 
-// webhook for Safepay
+// Safepay Webhook - called by Safepay when payment is confirmed
 exports.safepayWebhook = async (req, res) => {
   try {
-    const signature = req.headers['x-sfpy-signature'];
     const payload = req.body;
-    const secret = process.env.SAFEPAY_WEBHOOK_SECRET || "default_webhook_secret";
-
-    // Validate Signature
-    const crypto = require('crypto');
-    const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(payload)).digest('hex');
-    
-    // In production, enforce signature validation:
-    // if (hash !== signature) {
-    //   return res.status(400).json({ message: "Invalid Signature" });
-    // }
+    console.log("[SAFEPAY WEBHOOK] Received:", JSON.stringify(payload));
 
     if (payload && payload.data && payload.data.state === "PAID") {
       const tracker = payload.data.tracker;
@@ -205,52 +189,73 @@ exports.safepayWebhook = async (req, res) => {
 
       if (payment) {
         const Order = require("../models/Order");
-        const order = await Order.findByIdAndUpdate(payment.orderId, { status: "ready" }, { new: true });
-        
-        // Broadcast via Socket.io
-        const io = require("socket.io-client");
-        const socket = io("http://localhost:5000");
-        socket.emit("order_paid", { orderId: order._id, tailorId: order.tailorId });
-        socket.disconnect();
+        await Order.findByIdAndUpdate(payment.orderId, { status: "ready" });
+        console.log(`[SAFEPAY WEBHOOK] Payment confirmed for orderId=${payment.orderId}`);
       }
     }
 
     res.status(200).send("OK");
   } catch (err) {
+    console.error("[SAFEPAY WEBHOOK] Error:", err.message);
     res.status(500).json({ message: err.message });
   }
 };
 
-// Friendly HTML pages for WebView redirects
+// Called by Safepay after successful payment - updates DB and shows success page
 exports.safepaySuccess = async (req, res) => {
+  try {
+    const { orderId } = req.query;
+    if (orderId) {
+      const payment = await Payment.findOneAndUpdate(
+        { orderId },
+        { status: 'paid' },
+        { new: true }
+      );
+      if (payment) {
+        const Order = require("../models/Order");
+        await Order.findByIdAndUpdate(orderId, { status: "ready" });
+        console.log(`[SAFEPAY SUCCESS] Payment confirmed for orderId=${orderId}`);
+      }
+    }
+  } catch (e) {
+    console.error("[SAFEPAY SUCCESS] Error:", e.message);
+  }
+
   res.send(`
     <html>
-      <body style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; text-align:center; padding:20px;">
-        <h1 style="color: green;">Payment Successful!</h1>
-        <p>Closing window automatically...</p>
+      <head><title>Payment Successful</title></head>
+      <body style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; text-align:center; padding:20px; background:#f0faf0;">
+        <div style="font-size:80px;">✅</div>
+        <h1 style="color:#2e7d32; margin-top:16px;">Payment Successful!</h1>
+        <p style="color:#555;">Your order has been confirmed. You can go back to the app.</p>
+        <p style="color:#999; font-size:12px; margin-top:40px;">This window will close automatically...</p>
+        <script>setTimeout(() => window.close(), 3000);</script>
       </body>
     </html>
   `);
 };
 
+// Called by Safepay when payment is cancelled
 exports.safepayCancel = async (req, res) => {
   try {
     const { orderId } = req.query;
     if (orderId) {
-      const Payment = require("../models/Payment");
       await Payment.findOneAndUpdate({ orderId }, { status: 'cancelled' });
+      console.log(`[SAFEPAY CANCEL] Payment cancelled for orderId=${orderId}`);
     }
   } catch (e) {
-    console.error("Cancel Webhook Error:", e);
+    console.error("[SAFEPAY CANCEL] Error:", e.message);
   }
 
   res.send(`
     <html>
-      <body style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; text-align:center; padding:20px; background-color: #fafafa;">
-        <div style="width: 40px; height: 40px; border: 4px solid #f44336; border-top: 4px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-        <h2 style="color: #f44336; margin-top: 20px;">Cancelling Payment...</h2>
-        <p style="color: #666;">Returning you to the app automatically...</p>
+      <head><title>Payment Cancelled</title></head>
+      <body style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; text-align:center; padding:20px; background:#fff8f8;">
+        <div style="font-size:80px;">❌</div>
+        <h1 style="color:#c62828; margin-top:16px;">Payment Cancelled</h1>
+        <p style="color:#555;">Your payment was not processed. You can go back to the app and try again.</p>
+        <p style="color:#999; font-size:12px; margin-top:40px;">This window will close automatically...</p>
+        <script>setTimeout(() => window.close(), 3000);</script>
       </body>
     </html>
   `);
