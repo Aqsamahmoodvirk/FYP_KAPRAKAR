@@ -99,10 +99,9 @@ exports.initSafepay = async (req, res) => {
     
     const safepayClient = process.env.SAFEPAY_PUBLIC_KEY || "sec_97992e36-93e4-43c3-adc6-884c1c292663";
     
-    // 2. Payload Structure
-    // Safepay handles the amount as a standard number in some API versions, 
-    // so we pass the exact parsedAmount (e.g., 1500) rather than multiplying by 100.
-    const amountForSafepay = parsedAmount;
+    // Safepay requires amounts in the lowest denomination (Paisas).
+    // So 1500 PKR must be sent as 150000.
+    const amountForSafepay = Math.round(parsedAmount * 100);
 
     const payload = {
       client: safepayClient,
