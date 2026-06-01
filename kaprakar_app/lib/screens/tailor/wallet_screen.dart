@@ -33,8 +33,8 @@ class _WalletScreenState extends State<WalletScreen> {
     final transactions = tailorService.walletTransactions;
 
     final int earnings = stats?['totalEarnings'] ?? 0;
-    // Mock available balance as 30% of total earnings just for display logic
-    final double availableBalance = earnings * 0.3;
+    // Available balance = total earnings (actual amount received)
+    final double availableBalance = earnings.toDouble();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
