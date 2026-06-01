@@ -169,39 +169,34 @@ exports.getTailorStats = async (req, res) => {
   try {
     const { tailorId } = req.params;
     const Order = require("../models/Order");
+    const Payment = require("../models/Payment");
 
     const tailor = await Tailor.findById(tailorId);
     if (!tailor) return res.status(404).json({ message: "Tailor not found" });
 
-    const stats = await Order.aggregate([
-      { $match: { tailorId: tailor._id, status: "completed" } },
-      { 
-        $group: { 
-          _id: null, 
-          totalEarnings: { $sum: "$amount" },
-          ordersCompletedThisMonth: { 
-            $sum: {
-              $cond: [
-                { $gte: ["$createdAt", new Date(new Date().getFullYear(), new Date().getMonth(), 1)] },
-                1, 0
-              ]
-            }
-          }
-        } 
-      }
+    // Get all completed orders for this tailor
+    const completedOrders = await Order.find({ tailorId: tailor._id, status: "completed" }).select('_id');
+    const completedOrderIds = completedOrders.map(o => o._id);
+    const ordersCompletedTotal = completedOrders.length;
+
+    // Sum up actual paid amounts from Payment model
+    const paymentStats = await Payment.aggregate([
+      { $match: { orderId: { $in: completedOrderIds }, status: 'paid' } },
+      { $group: { _id: null, totalEarnings: { $sum: "$amount" } } }
     ]);
 
-    const result = stats.length > 0 ? stats[0] : { totalEarnings: 0, ordersCompletedThisMonth: 0 };
-    
+    const totalEarnings = paymentStats.length > 0 ? paymentStats[0].totalEarnings : 0;
+
     res.status(200).json({
-      totalEarnings: result.totalEarnings,
-      ordersCompletedThisMonth: result.ordersCompletedThisMonth,
+      totalEarnings,
+      ordersCompletedThisMonth: ordersCompletedTotal,
       rating: tailor.rating || 5.0
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // UPDATE TAILOR PROFILE
 exports.updateTailorProfile = async (req, res) => {
