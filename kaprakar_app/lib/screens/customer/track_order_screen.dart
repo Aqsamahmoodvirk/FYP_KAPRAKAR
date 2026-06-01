@@ -7,9 +7,9 @@ import '../../repositories/order_repository.dart';
 import '../../services/auth_service.dart'; // To get baseUrl for image
 import 'package:kaprakar_app/l10n/app_localizations.dart';
 import 'dart:async';
-import 'package:url_launcher/url_launcher.dart';
 import 'preview_3d_screen.dart';
 import '../../routes/app_routes.dart';
+import 'payment_screen.dart';
 
 enum PaymentState { idle, authenticating, success }
 
@@ -184,70 +184,35 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
   }
 
   Future<void> _handlePayment() async {
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    setState(() => _paymentState = PaymentState.authenticating);
     final service = JourneyService();
     final amount = double.tryParse(_orderData?['totalPrice']?.toString() ?? '1500') ?? 1500.0;
-    
-    final checkoutUrl = await service.generateCheckout(_orderId!, amount, service.currentUserId ?? '');
-    
-    if (checkoutUrl != null && mounted) {
-      final url = Uri.parse(checkoutUrl);
-      if (await canLaunchUrl(url)) {
-        // Test in external browser to bypass Android WebView tracking/DOM storage restrictions
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-        
-        // Start 3-second polling for payment status
-        _paymentPollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-          if (!mounted) {
-            timer.cancel();
-            return;
-          }
-          final status = await service.getPaymentStatus(_orderId!);
-          if (status == 'paid') {
-            timer.cancel();
-            await _fetchOrder(); // Will fetch the updated order where status = 'ready'
-            if (mounted) {
-              closeInAppWebView();
-              setState(() => _paymentState = PaymentState.success);
-              
-              // Clear cart (if applicable) and return to home after 2s
-              Future.delayed(const Duration(seconds: 2), () {
-                if (mounted) {
-                  Navigator.pushReplacementNamed(context, AppRoutes.customerHome);
-                }
-              });
-            }
-          } else if (status == 'cancelled') {
-            // Automatically close the WebView when backend detects cancellation
-            timer.cancel();
-            closeInAppWebView();
-            if (mounted) {
-              setState(() => _paymentState = PaymentState.idle);
-              scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Payment Cancelled. You can try again later.')));
-            }
-          }
-        });
-      } else {
-        setState(() => _paymentState = PaymentState.idle);
-        if (mounted) scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Could not launch Safepay Checkout.')));
-      }
-    } else {
-      setState(() => _paymentState = PaymentState.idle);
-      if (mounted) scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Failed to generate checkout link.')));
+
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen(
+          orderId: _orderId!,
+          amount: amount,
+          userId: service.currentUserId ?? '',
+        ),
+      ),
+    );
+
+    if (result == true && mounted) {
+      await _fetchOrder();
     }
   }
+
+
 
   Future<void> _cancelPayment() async {
     if (_paymentPollingTimer != null && _paymentPollingTimer!.isActive) {
       _paymentPollingTimer!.cancel();
     }
     setState(() => _paymentState = PaymentState.idle);
-    closeInAppWebView();
-    
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Payment Cancelled. You can try again later.')));
-      // Removed the navigation and order cancellation so the order safely remains 'unpaid'
     }
   }
 
