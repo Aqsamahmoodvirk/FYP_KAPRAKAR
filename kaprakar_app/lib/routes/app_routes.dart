@@ -142,7 +142,14 @@ class AppRoutes {
     placeOrder: (_) => const PlaceOrderScreen(),
     trackOrder: (_) => const TrackOrderScreen(),
     preview: (_) => const PreviewStitchedDressScreen(),
-    payment: (_) => const PaymentScreen(),
+    payment: (context) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      return PaymentScreen(
+        orderId: args?['orderId'] as String? ?? '',
+        amount: (args?['amount'] as num?)?.toDouble() ?? 1500.0,
+        userId: args?['userId'] as String? ?? '',
+      );
+    },
     feedback: (_) => const FeedbackScreen(),
     measurementGuide: (_) => const MeasurementGuideScreen(),
 
