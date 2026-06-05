@@ -266,9 +266,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               top: 110, // Space for glass AppBar
               bottom: 120, // Space for glass input area
             ),
-            itemCount: messages.length,
+            itemCount: messages.length + 1,
             itemBuilder: (context, index) {
-              final msg = messages[index];
+              if (index == 0) {
+                return _buildChatHeader();
+              }
+              final msg = messages[index - 1];
               return _buildMessageBubble(msg);
             },
           ),
@@ -277,6 +280,27 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             child: _buildInputArea(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildChatHeader() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: Text(
+          "Messages are end-to-end encrypted.",
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
@@ -387,13 +411,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 2),
-                  child: IconButton(
-                    icon: Icon(Icons.add_circle_outline, color: Theme.of(context).colorScheme.primary, size: 28),
-                    onPressed: () {},
-                  ),
-                ),
+
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
