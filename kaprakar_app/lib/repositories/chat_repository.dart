@@ -16,7 +16,7 @@ abstract class ChatRepository {
 
 class ApiChatRepository implements ChatRepository {
   // Use laptop IP or localhost mapping for physical device
-  final String baseUrl = "http://192.168.0.101.1:5000/api";
+  final String baseUrl = "https://fypkaprakar-production-4896.up.railway.app/api";
 
   @override
   Future<List<Map<String, dynamic>>> getUserChats(String userId) async {
