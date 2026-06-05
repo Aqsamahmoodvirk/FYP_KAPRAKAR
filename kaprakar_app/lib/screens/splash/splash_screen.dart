@@ -120,63 +120,32 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     final logoWidth = (size.width * 0.92).clamp(280.0, 420.0);
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
-              Colors.white,
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FadeTransition(
+                opacity: _dotsOpacity,
+                child: AnimatedBuilder(
+                  animation: _dotsController,
+                  builder: (context, _) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _Dot(opacity: _dot1.value, color: _dotColor),
+                        const SizedBox(width: 8),
+                        _Dot(opacity: _dot2.value, color: _dotColor),
+                        const SizedBox(width: 8),
+                        _Dot(opacity: _dot3.value, color: _dotColor),
+                      ],
+                    );
+                  },
+                ),
+              ),
             ],
-            stops: const [0.0, 0.4, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FadeTransition(
-                  opacity: _logoOpacity,
-                  child: SlideTransition(
-                    position: _logoSlide,
-                    child: ScaleTransition(
-                      scale: _logoScale,
-                      child: SizedBox(
-                        width: logoWidth,
-                        child: Image.asset(
-                          'assets/images/logo_transparent.png',
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.high,
-                          isAntiAlias: true,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                FadeTransition(
-                  opacity: _dotsOpacity,
-                  child: AnimatedBuilder(
-                    animation: _dotsController,
-                    builder: (context, _) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _Dot(opacity: _dot1.value, color: _dotColor),
-                          const SizedBox(width: 8),
-                          _Dot(opacity: _dot2.value, color: _dotColor),
-                          const SizedBox(width: 8),
-                          _Dot(opacity: _dot3.value, color: _dotColor),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
