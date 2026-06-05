@@ -61,7 +61,7 @@ def generate_style_note(data: StyleNoteRequest):
     user_prompt = f"Occasion: {data.occasion}, Season: {data.season}, Color: {data.color}, Fabric: {data.fabric}"
 
     payload = {
-        "model": "llama3-8b-8192",
+        "model": "llama-3.1-8b-instant",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -75,7 +75,8 @@ def generate_style_note(data: StyleNoteRequest):
         data=json.dumps(payload).encode("utf-8"),
         headers={
             "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "User-Agent": "KaprakarApp/1.0"
         },
         method="POST"
     )
